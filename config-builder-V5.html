@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slice Ninja Config Builder V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+}
+h1 {
+  font-family: 'Fredoka One', cursive;
+  color: #1a1a2e;
+  font-size: 34px;
+  margin-bottom: 4px;
+}
+.subtitle { color: #777; margin-bottom: 2rem; font-size: 14px; }
+.section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.section:last-child { border-bottom: none; margin-bottom: 0; }
+.section h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px;
+  color: #1a1a2e;
+  margin-bottom: 1rem;
+}
+label {
+  display: block;
+  font-weight: 700;
+  color: #444;
+  margin-bottom: 5px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+input[type="text"], select {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 1rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus, select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.color-row { display: flex; gap: 10px; align-items: center; margin-bottom: 1rem; }
+.color-row input[type="color"] {
+  width: 46px; height: 40px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.color-row input[type="text"] { flex: 1; margin-bottom: 0; }
+.upload-area {
+  border: 2px dashed #d0d0d0;
+  border-radius: 10px;
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fafafa;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.upload-area:hover, .upload-area.dragover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+.upload-area input[type="file"] {
+  display: none;
+}
+.upload-icon { font-size: 28px; margin-bottom: 6px; }
+.upload-area p { font-size: 13px; color: #888; }
+.preview-img {
+  max-width: 100%; max-height: 120px;
+  border-radius: 8px; margin-top: 10px;
+  display: none;
+}
+.upload-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+.clear-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 10;
+}
+.clear-btn:hover { background: #e03030; }
+.clear-btn.show { display: flex; }
+.resolution-note {
+  font-size: 12px;
+  color: #999;
+  margin-top: 6px;
+  font-style: italic;
+  padding: 8px;
+  background: #f9f9f9;
+  border-left: 3px solid #667eea;
+  border-radius: 0 4px 4px 0;
+}
+.option-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+.option {
+  flex: 1; min-width: 100px;
+  padding: 12px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 700;
+  font-size: 13px;
+  color: #555;
+  background: white;
+}
+.option:hover { border-color: #667eea; color: #667eea; }
+.option.selected {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: transparent;
+}
+.option .opt-icon { font-size: 22px; margin-bottom: 4px; }
+.item-row {
+  display: flex; gap: 8px; align-items: center;
+  background: #f8f8f8;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.item-row input[type="text"] {
+  margin-bottom: 0;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.emoji-field { width: 58px !important; text-align: center; font-size: 18px; }
+.pts-field { width: 60px !important; text-align: center; }
+.name-field { flex: 1; }
+.del-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 30px; height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.del-btn:hover { background: #e03030; }
+.add-btn {
+  width: 100%;
+  padding: 10px;
+  background: white;
+  border: 2px dashed #d0d0d0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #888;
+  transition: all 0.2s;
+}
+.add-btn:hover { border-color: #667eea; color: #667eea; background: #f0f4ff; }
+.item-header {
+  display: flex; gap: 8px;
+  padding: 0 12px 6px;
+  font-size: 11px; font-weight: 700;
+  color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.hdr-emoji { width: 58px; text-align: center; }
+.hdr-name { flex: 1; }
+.hdr-pts { width: 60px; text-align: center; }
+.hdr-del { width: 30px; }
+.download-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+}
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+}
+.success {
+  background: #d4edda; color: #155724;
+  padding: 14px; border-radius: 8px;
+  margin-top: 1rem; font-weight: 700;
+  font-size: 14px; display: none;
+  text-align: center;
+}
+.success.show { display: block; }
+.note {
+  background: #fff8e1;
+  border-left: 4px solid #ffc107;
+  padding: 10px 14px;
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.emoji-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.emoji-modal.show { display: flex; }
+.emoji-picker {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.emoji-picker h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #333;
+}
+.emoji-category {
+  margin-bottom: 20px;
+}
+.emoji-category-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 8px;
+}
+.emoji-item {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+.emoji-item:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+  transform: scale(1.1);
+}
+.emoji-modal .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.emoji-modal .close-btn:hover { color: #333; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎮 Slice Ninja Config Builder</h1>
+  <p class="subtitle">Fill in the form below — no coding needed! Click Download Config when done.</p>
+
+  <!-- BRANDING -->
+  <div class="section">
+    <h2>🏷️ Branding</h2>
+    <div class="form-row">
+      <div>
+        <label>Game Title Line 1</label>
+        <input type="text" id="title" value="SLICE">
+      </div>
+      <div>
+        <label>Game Title Line 2</label>
+        <input type="text" id="titleLine2" value="NINJA">
+      </div>
+    </div>
+    <label>Event Name (shown on menu screen)</label>
+    <input type="text" id="eventName" value="Default Event 2026">
+    <label>Tagline (shown under title)</label>
+    <input type="text" id="subtitle" value="Swipe to slice the fruits!">
+    <label>Company Logo</label>
+    <div class="note">📌 Drag your logo image here OR paste a URL below</div>
+    <div class="upload-container">
+      <div class="upload-area" id="logoDropZone">
+        <div class="upload-icon">🖼️</div>
+        <p>Drag &amp; drop logo here, or click to browse</p>
+        <input type="file" id="logoFile" accept="image/*">
+      </div>
+      <button class="clear-btn" id="logoClearBtn" title="Remove logo">✕</button>
+    </div>
+    <img id="logoPreview" class="preview-img">
+    <div class="resolution-note" id="logoNote" style="display:none;">
+      📐 Recommended: 1024×1024px or larger, PNG/JPG format, max 2MB
+    </div>
+    <label>Logo URL (if hosted online)</label>
+    <input type="text" id="logoUrl" placeholder="https://yourcompany.com/logo.png">
+  </div>
+
+  <!-- LANGUAGE -->
+  <div class="section">
+    <h2>🌍 Language</h2>
+    <div class="option-group" id="langGroup">
+      <div class="option selected" data-val="en"><div class="opt-icon">🇬🇧</div>English</div>
+      <div class="option" data-val="ms"><div class="opt-icon">🇲🇾</div>Malay</div>
+      <div class="option" data-val="zh"><div class="opt-icon">🇨🇳</div>Chinese</div>
+    </div>
+    <input type="hidden" id="language" value="en">
+  </div>
+
+  <!-- BACKGROUND THEME -->
+  <div class="section">
+    <h2>🎨 Background Theme</h2>
+    <div class="option-group" id="themeGroup">
+      <div class="option selected" data-val="carnival"><div class="opt-icon">🎪</div>Carnival</div>
+      <div class="option" data-val="raya"><div class="opt-icon">🌙</div>Raya</div>
+      <div class="option" data-val="minimal"><div class="opt-icon">⚫</div>Minimal</div>
+    </div>
+    <input type="hidden" id="backgroundTheme" value="carnival">
+    <div class="form-row">
+      <div>
+        <label>Background Color</label>
+        <div class="color-row">
+          <input type="color" id="bgColorPicker" value="#0d0221">
+          <input type="text" id="bgColor" value="#0d0221">
+        </div>
+      </div>
+      <div>
+        <label>Accent / Button Color</label>
+        <div class="color-row">
+          <input type="color" id="accentPicker" value="#ff6b35">
+          <input type="text" id="accentColor" value="#ff6b35">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM BACKGROUNDS -->
+  <div class="section">
+    <h2>🎨 Custom Backgrounds (Optional)</h2>
+    <div class="note">💡 Use your own design. If empty, uses default Carnival theme + your accent colors.</div>
+    
+    <label>Menu Background Image</label>
+    <div class="upload-container">
+      <div class="upload-area" id="menuBgDropZone">
+        <div class="upload-icon">🖼️</div>
+        <p>Drag &amp; drop menu background here, or click to browse</p>
+        <input type="file" id="menuBgFile" accept="image/*">
+      </div>
+      <button class="clear-btn" id="menuBgClearBtn" title="Remove menu background">✕</button>
+    </div>
+    <div class="resolution-note">
+      📐 Recommended: 1080×1920px (9:16 portrait), PNG/JPG format, max 3MB
+    </div>
+
+    <label style="margin-top: 1.5rem;">Game Background Image</label>
+    <div class="upload-container">
+      <div class="upload-area" id="gameBgDropZone">
+        <div class="upload-icon">🖼️</div>
+        <p>Drag &amp; drop game background here, or click to browse</p>
+        <input type="file" id="gameBgFile" accept="image/*">
+      </div>
+      <button class="clear-btn" id="gameBgClearBtn" title="Remove game background">✕</button>
+    </div>
+    <div class="resolution-note">
+      📐 Recommended: 1080×1920px (9:16 portrait), PNG/JPG format, max 3MB
+    </div>
+  </div>
+
+  <!-- MUSIC & AUDIO -->
+  <div class="section">
+    <h2>🎵 Music & Audio (Optional)</h2>
+    <div class="note">💡 MP3 files only. Upload music files that will play in the game.</div>
+    
+    <label>Menu Background Music</label>
+    <div class="upload-container">
+      <div class="upload-area" id="menuMusicDropZone">
+        <div class="upload-icon">🎵</div>
+        <p>Drag &amp; drop menu music here, or click to browse</p>
+        <input type="file" id="menuMusicFile" accept="audio/mpeg">
+      </div>
+      <button class="clear-btn" id="menuMusicClearBtn" title="Remove menu music">✕</button>
+    </div>
+    <div class="resolution-note">
+      📁 MP3 format only. Recommended: 30-60 seconds loop, max 5MB
+    </div>
+
+    <label style="margin-top: 1.5rem;">Game Start Music</label>
+    <div class="upload-container">
+      <div class="upload-area" id="gameMusicDropZone">
+        <div class="upload-icon">🎵</div>
+        <p>Drag &amp; drop game music here, or click to browse</p>
+        <input type="file" id="gameMusicFile" accept="audio/mpeg">
+      </div>
+      <button class="clear-btn" id="gameMusicClearBtn" title="Remove game music">✕</button>
+    </div>
+    <div class="resolution-note">
+      📁 MP3 format only. Recommended: 30-60 seconds loop, max 5MB
+    </div>
+  </div>
+  <div class="section">
+    <h2>🍎 Items to Slice</h2>
+    <div class="note">💡 Emoji = what players see. Points = score value. You can add any emoji!</div>
+    <div class="item-header">
+      <span class="hdr-emoji">Emoji</span>
+      <span class="hdr-name">Name</span>
+      <span class="hdr-pts">Points</span>
+      <span class="hdr-del"></span>
+    </div>
+    <div id="itemsList"></div>
+    <button class="add-btn" id="addItemBtn">+ Add Item</button>
+    <div style="margin-top: 1rem;">
+      <label>Bomb Emoji (item players must NOT slice)</label>
+      <input type="text" id="bombEmoji" value="💣" style="width: 80px; text-align: center; font-size: 20px;">
+    </div>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <div class="section">
+    <h2>📥 Download</h2>
+    <p style="font-size: 13px; color: #666; margin-bottom: 1rem;">
+      Once downloaded, open your <strong>index.html</strong> in Notepad, find the section that says
+      <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 4px;">EDIT YOUR EVENT CONFIG HERE</code>
+      and replace everything between the two <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 4px;">script</code> tags with the contents of the downloaded file.
+    </p>
+    <button class="download-btn" id="downloadBtn">📥 Download My Config</button>
+    <div class="success" id="successMsg">✅ Config downloaded! Follow the instructions above to apply it to your game.</div>
+  </div>
+
+</div>
+
+<script>
+const defaultItems = [
+  { emoji: "🍉", name: "watermelon", points: 1 },
+  { emoji: "🍎", name: "apple",      points: 1 },
+  { emoji: "🍊", name: "orange",     points: 2 },
+  { emoji: "🍌", name: "banana",     points: 2 },
+  { emoji: "🍓", name: "strawberry", points: 3 },
+  { emoji: "🍇", name: "grapes",     points: 3 },
+];
+
+// ============================================
+// AUTO-SAVE CONFIG.JSON SYSTEM
+// Saves all builder settings to local config.json
+// ============================================
+
+// Save current state to config.json
+function saveConfigToFile() {
+  const config = {
+    title: document.getElementById('title').value,
+    titleLine2: document.getElementById('titleLine2').value,
+    eventName: document.getElementById('eventName').value,
+    subtitle: document.getElementById('subtitle').value,
+    logoUrl: document.getElementById('logoUrl').value,
+    logoBase64: logoBase64,
+    menuBgBase64: menuBgBase64, // Menu background
+    gameBgBase64: gameBgBase64, // Game background
+    menuMusicUrl: menuMusicUrl, // Menu music file path
+    gameMusicUrl: gameMusicUrl, // Game music file path
+    language: document.getElementById('language').value,
+    backgroundTheme: document.getElementById('backgroundTheme').value,
+    bgColor: document.getElementById('bgColor').value,
+    accentColor: document.getElementById('accentColor').value,
+    bombEmoji: document.getElementById('bombEmoji').value,
+    items: items.map(it => ({ emoji: it.emoji, name: it.name, points: it.points }))
+  };
+  
+  // Store in browser's localStorage
+  try {
+    localStorage.setItem('sliceNinjaConfig_' + window.location.pathname, JSON.stringify(config));
+    console.log('✅ Config saved:', {
+      logo: logoBase64 ? '✅' : '❌',
+      menuBg: menuBgBase64 ? '✅' : '❌',
+      gameBg: gameBgBase64 ? '✅' : '❌',
+      menuMusic: menuMusicUrl ? '✅' : '❌',
+      gameMusic: gameMusicUrl ? '✅' : '❌'
+    });
+  } catch(e) {
+    console.warn('⚠️ Could not save config:', e);
+  }
+}
+
+// Load config from file/storage
+function loadConfigFromFile() {
+  try {
+    const stored = localStorage.getItem('sliceNinjaConfig_' + window.location.pathname);
+    if (!stored) {
+      console.log('ℹ️ No saved config found - using defaults');
+      return false;
+    }
+    
+    const config = JSON.parse(stored);
+    console.log('✅ Loaded saved config:', config);
+    
+    // Restore all fields
+    document.getElementById('title').value = config.title || 'SLICE';
+    document.getElementById('titleLine2').value = config.titleLine2 || 'NINJA';
+    document.getElementById('eventName').value = config.eventName || 'Default Event 2026';
+    document.getElementById('subtitle').value = config.subtitle || 'Swipe to slice!';
+    document.getElementById('logoUrl').value = config.logoUrl || '';
+    document.getElementById('language').value = config.language || 'en';
+    document.getElementById('backgroundTheme').value = config.backgroundTheme || 'carnival';
+    document.getElementById('bgColor').value = config.bgColor || '#0d0221';
+    document.getElementById('accentColor').value = config.accentColor || '#ff6b35';
+    document.getElementById('bombEmoji').value = config.bombEmoji || '💣';
+    
+    // Restore color pickers
+    document.getElementById('bgColorPicker').value = config.bgColor || '#0d0221';
+    document.getElementById('accentPicker').value = config.accentColor || '#ff6b35';
+    
+    // Restore logo if saved as base64
+    if (config.logoBase64) {
+      logoBase64 = config.logoBase64;
+      const logoPreview = document.getElementById('logoPreview');
+      logoPreview.src = logoBase64;
+      logoPreview.style.display = 'block';
+      document.getElementById('logoDropZone').querySelector('p').textContent = '✅ Logo loaded! See preview below.';
+      document.getElementById('logoDropZone').style.borderColor = '#4CAF50';
+      document.getElementById('logoDropZone').style.background = '#f0fff4';
+      document.getElementById('logoClearBtn').classList.add('show');
+      console.log('📸 Logo restored from saved config');
+    }
+    
+    // Restore menu background if saved
+    if (config.menuBgBase64) {
+      menuBgBase64 = config.menuBgBase64;
+      document.getElementById('menuBgDropZone').querySelector('p').textContent = '✅ Menu background loaded!';
+      document.getElementById('menuBgDropZone').style.borderColor = '#4CAF50';
+      document.getElementById('menuBgDropZone').style.background = '#f0fff4';
+      document.getElementById('menuBgClearBtn').classList.add('show');
+      console.log('🖼️ Menu background restored');
+    }
+    
+    // Restore game background if saved
+    if (config.gameBgBase64) {
+      gameBgBase64 = config.gameBgBase64;
+      document.getElementById('gameBgDropZone').querySelector('p').textContent = '✅ Game background loaded!';
+      document.getElementById('gameBgDropZone').style.borderColor = '#4CAF50';
+      document.getElementById('gameBgDropZone').style.background = '#f0fff4';
+      document.getElementById('gameBgClearBtn').classList.add('show');
+      console.log('🖼️ Game background restored');
+    }
+    
+    // Restore menu music if saved
+    if (config.menuMusicUrl) {
+      menuMusicUrl = config.menuMusicUrl;
+      document.getElementById('menuMusicDropZone').querySelector('p').textContent = '✅ Menu music loaded!';
+      document.getElementById('menuMusicDropZone').style.borderColor = '#4CAF50';
+      document.getElementById('menuMusicDropZone').style.background = '#f0fff4';
+      document.getElementById('menuMusicClearBtn').classList.add('show');
+      console.log('🎵 Menu music restored');
+    }
+    
+    // Restore game music if saved
+    if (config.gameMusicUrl) {
+      gameMusicUrl = config.gameMusicUrl;
+      document.getElementById('gameMusicDropZone').querySelector('p').textContent = '✅ Game music loaded!';
+      document.getElementById('gameMusicDropZone').style.borderColor = '#4CAF50';
+      document.getElementById('gameMusicDropZone').style.background = '#f0fff4';
+      document.getElementById('gameMusicClearBtn').classList.add('show');
+      console.log('🎵 Game music restored');
+    }
+    
+    // Restore items
+    if (config.items && config.items.length > 0) {
+      items = config.items;
+    }
+    
+    // Restore selected options
+    document.querySelectorAll('#langGroup .option').forEach(opt => {
+      opt.classList.remove('selected');
+      if (opt.dataset.val === config.language) opt.classList.add('selected');
+    });
+    document.querySelectorAll('#themeGroup .option').forEach(opt => {
+      opt.classList.remove('selected');
+      if (opt.dataset.val === config.backgroundTheme) opt.classList.add('selected');
+    });
+    
+    return true;
+  } catch(e) {
+    console.error('❌ Error loading config:', e);
+    return false;
+  }
+}
+
+// Load config when page opens
+window.addEventListener('load', () => {
+  renderItems();
+  setupEmojiFieldHandlers();
+});
+
+// Load config immediately (don't wait for page load)
+loadConfigFromFile();
+
+// Option group click handler
+function makeOptionGroup(groupId, hiddenId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      document.getElementById(hiddenId).value = opt.dataset.val;
+    });
+  });
+}
+makeOptionGroup('langGroup', 'language');
+makeOptionGroup('themeGroup', 'backgroundTheme');
+
+// Color pickers
+function syncColors(pickerId, textId) {
+  const picker = document.getElementById(pickerId);
+  const text   = document.getElementById(textId);
+  picker.addEventListener('input', () => text.value = picker.value);
+  text.addEventListener('input', () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(text.value)) picker.value = text.value;
+  });
+}
+syncColors('bgColorPicker', 'bgColor');
+syncColors('accentPicker', 'accentColor');
+
+// ============================================
+// AUTO-SAVE ON INPUT CHANGES
+// ============================================
+const autoSaveFields = [
+  'title', 'titleLine2', 'eventName', 'subtitle', 'logoUrl',
+  'language', 'backgroundTheme', 'bgColor', 'bgColorPicker',
+  'accentColor', 'accentPicker', 'bombEmoji'
+];
+
+autoSaveFields.forEach(fieldId => {
+  const field = document.getElementById(fieldId);
+  if (field) {
+    field.addEventListener('input', saveConfigToFile);
+    field.addEventListener('change', saveConfigToFile);
+  }
+});
+
+// Also save when language or theme options are clicked
+document.querySelectorAll('#langGroup .option, #themeGroup .option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    setTimeout(saveConfigToFile, 50);
+  });
+});
+
+// Items list
+let items = [...defaultItems];
+function renderItems() {
+  const list = document.getElementById('itemsList');
+  list.innerHTML = '';
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = `
+      <input type="text" class="emoji-field" value="${item.emoji}" placeholder="🍎" title="Emoji">
+      <input type="text" class="name-field" value="${item.name}" placeholder="apple" title="Name">
+      <input type="text" class="pts-field" value="${item.points}" placeholder="1" title="Points">
+      <button class="del-btn" title="Remove">✕</button>
+    `;
+    row.querySelectorAll('input')[0].addEventListener('input', e => { items[i].emoji = e.target.value; saveConfigToFile(); });
+    row.querySelectorAll('input')[1].addEventListener('input', e => { items[i].name  = e.target.value; saveConfigToFile(); });
+    row.querySelectorAll('input')[2].addEventListener('input', e => { items[i].points = parseInt(e.target.value) || 1; saveConfigToFile(); });
+    row.querySelector('.del-btn').addEventListener('click', () => { items.splice(i, 1); renderItems(); saveConfigToFile(); });
+    list.appendChild(row);
+  });
+}
+renderItems();
+
+document.getElementById('addItemBtn').addEventListener('click', () => {
+  items.push({ emoji: "⭐", name: "new item", points: 1 });
+  renderItems();
+  saveConfigToFile();
+  // scroll to last item
+  document.getElementById('itemsList').lastChild.querySelector('input').focus();
+});
+
+// Logo upload
+const logoFile = document.getElementById('logoFile');
+const logoPreview = document.getElementById('logoPreview');
+const logoDropZone = document.getElementById('logoDropZone');
+let logoBase64 = '';
+
+// Background variables
+let menuBgBase64 = '';
+let gameBgBase64 = '';
+
+// Music variables
+let menuMusicUrl = '';
+let gameMusicUrl = '';
+
+function handleLogoFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    logoBase64 = e.target.result;
+    logoPreview.src = logoBase64;
+    logoPreview.style.display = 'block';
+    logoDropZone.querySelector('p').textContent = '✅ Logo loaded! See preview below.';
+    logoDropZone.style.borderColor = '#4CAF50';
+    logoDropZone.style.background = '#f0fff4';
+    document.getElementById('logoUrl').value = '';
+    saveConfigToFile(); // Auto-save when logo is uploaded
+  };
+  reader.readAsDataURL(file);
+}
+
+logoFile.addEventListener("change", e => handleLogoFile(e.target.files[0]));
+logoDropZone.addEventListener("click", () => logoFile.click());
+logoDropZone.addEventListener('dragover', e => { e.preventDefault(); logoDropZone.classList.add('dragover'); });
+logoDropZone.addEventListener('dragleave', () => logoDropZone.classList.remove('dragover'));
+logoDropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  logoDropZone.classList.remove('dragover');
+  handleLogoFile(e.dataTransfer.files[0]);
+});
+
+// Clear logo button
+document.getElementById('logoClearBtn').addEventListener('click', () => {
+  logoBase64 = '';
+  document.getElementById('logoFile').value = '';
+  document.getElementById('logoPreview').style.display = 'none';
+  document.getElementById('logoDropZone').querySelector('p').textContent = 'Drag & drop logo here, or click to browse';
+  document.getElementById('logoDropZone').style.borderColor = '#d0d0d0';
+  document.getElementById('logoDropZone').style.background = '#fafafa';
+  document.getElementById('logoClearBtn').classList.remove('show');
+  document.getElementById('logoUrl').value = '';
+  saveConfigToFile();
+  console.log('🗑️ Logo cleared');
+});
+
+// ============================================
+// MENU BACKGROUND HANDLERS
+// ============================================
+const menuBgFile = document.getElementById('menuBgFile');
+const menuBgDropZone = document.getElementById('menuBgDropZone');
+
+function handleMenuBgFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    menuBgBase64 = e.target.result;
+    menuBgDropZone.querySelector('p').textContent = '✅ Menu background loaded!';
+    menuBgDropZone.style.borderColor = '#4CAF50';
+    menuBgDropZone.style.background = '#f0fff4';
+    document.getElementById('menuBgClearBtn').classList.add('show');
+    saveConfigToFile();
+  };
+  reader.readAsDataURL(file);
+}
+
+menuBgFile.addEventListener("change", e => handleMenuBgFile(e.target.files[0]));
+menuBgDropZone.addEventListener("click", () => menuBgFile.click());
+menuBgDropZone.addEventListener('dragover', e => { e.preventDefault(); menuBgDropZone.classList.add('dragover'); });
+menuBgDropZone.addEventListener('dragleave', () => menuBgDropZone.classList.remove('dragover'));
+menuBgDropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  menuBgDropZone.classList.remove('dragover');
+  handleMenuBgFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('menuBgClearBtn').addEventListener('click', () => {
+  menuBgBase64 = '';
+  document.getElementById('menuBgFile').value = '';
+  menuBgDropZone.querySelector('p').textContent = 'Drag & drop menu background here, or click to browse';
+  menuBgDropZone.style.borderColor = '#d0d0d0';
+  menuBgDropZone.style.background = '#fafafa';
+  document.getElementById('menuBgClearBtn').classList.remove('show');
+  saveConfigToFile();
+  console.log('🗑️ Menu background cleared');
+});
+
+// ============================================
+// GAME BACKGROUND HANDLERS
+// ============================================
+const gameBgFile = document.getElementById('gameBgFile');
+const gameBgDropZone = document.getElementById('gameBgDropZone');
+
+function handleGameBgFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    gameBgBase64 = e.target.result;
+    gameBgDropZone.querySelector('p').textContent = '✅ Game background loaded!';
+    gameBgDropZone.style.borderColor = '#4CAF50';
+    gameBgDropZone.style.background = '#f0fff4';
+    document.getElementById('gameBgClearBtn').classList.add('show');
+    saveConfigToFile();
+  };
+  reader.readAsDataURL(file);
+}
+
+gameBgFile.addEventListener("change", e => handleGameBgFile(e.target.files[0]));
+gameBgDropZone.addEventListener("click", () => gameBgFile.click());
+gameBgDropZone.addEventListener('dragover', e => { e.preventDefault(); gameBgDropZone.classList.add('dragover'); });
+gameBgDropZone.addEventListener('dragleave', () => gameBgDropZone.classList.remove('dragover'));
+gameBgDropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  gameBgDropZone.classList.remove('dragover');
+  handleGameBgFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('gameBgClearBtn').addEventListener('click', () => {
+  gameBgBase64 = '';
+  document.getElementById('gameBgFile').value = '';
+  gameBgDropZone.querySelector('p').textContent = 'Drag & drop game background here, or click to browse';
+  gameBgDropZone.style.borderColor = '#d0d0d0';
+  gameBgDropZone.style.background = '#fafafa';
+  document.getElementById('gameBgClearBtn').classList.remove('show');
+  saveConfigToFile();
+  console.log('🗑️ Game background cleared');
+});
+
+// ============================================
+// MENU MUSIC HANDLERS
+// ============================================
+const menuMusicFile = document.getElementById('menuMusicFile');
+const menuMusicDropZone = document.getElementById('menuMusicDropZone');
+
+function handleMenuMusicFile(file) {
+  if (!file || !file.type.startsWith('audio/')) return;
+  // Store file name as URL reference
+  menuMusicUrl = file.name;
+  menuMusicDropZone.querySelector('p').textContent = `✅ Menu music loaded! (${file.name})`;
+  menuMusicDropZone.style.borderColor = '#4CAF50';
+  menuMusicDropZone.style.background = '#f0fff4';
+  document.getElementById('menuMusicClearBtn').classList.add('show');
+  saveConfigToFile();
+  console.log('🎵 Menu music file:', file.name);
+}
+
+menuMusicFile.addEventListener("change", e => handleMenuMusicFile(e.target.files[0]));
+menuMusicDropZone.addEventListener("click", () => menuMusicFile.click());
+menuMusicDropZone.addEventListener('dragover', e => { e.preventDefault(); menuMusicDropZone.classList.add('dragover'); });
+menuMusicDropZone.addEventListener('dragleave', () => menuMusicDropZone.classList.remove('dragover'));
+menuMusicDropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  menuMusicDropZone.classList.remove('dragover');
+  handleMenuMusicFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('menuMusicClearBtn').addEventListener('click', () => {
+  menuMusicUrl = '';
+  document.getElementById('menuMusicFile').value = '';
+  menuMusicDropZone.querySelector('p').textContent = 'Drag & drop menu music here, or click to browse';
+  menuMusicDropZone.style.borderColor = '#d0d0d0';
+  menuMusicDropZone.style.background = '#fafafa';
+  document.getElementById('menuMusicClearBtn').classList.remove('show');
+  saveConfigToFile();
+  console.log('🗑️ Menu music cleared');
+});
+
+// ============================================
+// GAME MUSIC HANDLERS
+// ============================================
+const gameMusicFile = document.getElementById('gameMusicFile');
+const gameMusicDropZone = document.getElementById('gameMusicDropZone');
+
+function handleGameMusicFile(file) {
+  if (!file || !file.type.startsWith('audio/')) return;
+  // Store file name as URL reference
+  gameMusicUrl = file.name;
+  gameMusicDropZone.querySelector('p').textContent = `✅ Game music loaded! (${file.name})`;
+  gameMusicDropZone.style.borderColor = '#4CAF50';
+  gameMusicDropZone.style.background = '#f0fff4';
+  document.getElementById('gameMusicClearBtn').classList.add('show');
+  saveConfigToFile();
+  console.log('🎵 Game music file:', file.name);
+}
+
+gameMusicFile.addEventListener("change", e => handleGameMusicFile(e.target.files[0]));
+gameMusicDropZone.addEventListener("click", () => gameMusicFile.click());
+gameMusicDropZone.addEventListener('dragover', e => { e.preventDefault(); gameMusicDropZone.classList.add('dragover'); });
+gameMusicDropZone.addEventListener('dragleave', () => gameMusicDropZone.classList.remove('dragover'));
+gameMusicDropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  gameMusicDropZone.classList.remove('dragover');
+  handleGameMusicFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('gameMusicClearBtn').addEventListener('click', () => {
+  gameMusicUrl = '';
+  document.getElementById('gameMusicFile').value = '';
+  gameMusicDropZone.querySelector('p').textContent = 'Drag & drop game music here, or click to browse';
+  gameMusicDropZone.style.borderColor = '#d0d0d0';
+  gameMusicDropZone.style.background = '#fafafa';
+  document.getElementById('gameMusicClearBtn').classList.remove('show');
+  saveConfigToFile();
+  console.log('🗑️ Game music cleared');
+});
+
+// Generate and download config
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const title       = document.getElementById('title').value || 'SLICE';
+  const titleLine2  = document.getElementById('titleLine2').value || 'NINJA';
+  const eventName   = document.getElementById('eventName').value || 'Event 2026';
+  const subtitle    = document.getElementById('subtitle').value || 'Swipe to slice!';
+  const language    = document.getElementById('language').value;
+  const bgTheme     = document.getElementById('backgroundTheme').value;
+  const bgColor     = document.getElementById('bgColor').value;
+  const accentColor = document.getElementById('accentColor').value;
+  const bombEmoji   = document.getElementById('bombEmoji').value || '💣';
+  const logoUrl     = logoBase64 || document.getElementById('logoUrl').value || '';
+  const menuBgUrl   = menuBgBase64 || ''; // Menu background
+  const gameBgUrl   = gameBgBase64 || ''; // Game background
+  const menuMusic   = menuMusicUrl || ''; // Menu music filename
+  const gameMusic   = gameMusicUrl || ''; // Game music filename
+
+  console.log('📥 Downloading config with:', {
+    logo: logoUrl ? '✅' : '❌',
+    menuBg: menuBgUrl ? '✅' : '❌',
+    gameBg: gameBgUrl ? '✅' : '❌',
+    menuMusic: menuMusic || '(empty)',
+    gameMusic: gameMusic || '(empty)'
+  });
+
+  // Auto-set button color based on accent brightness
+  const hex = accentColor.replace('#','');
+  const r = parseInt(hex.substr(0,2),16);
+  const g = parseInt(hex.substr(2,2),16);
+  const b = parseInt(hex.substr(4,2),16);
+  const brightness = (r*299 + g*587 + b*114) / 1000;
+  const buttonTextColor = brightness > 128 ? '#1a1a00' : '#ffffff';
+
+  // Build items array
+  const total = items.length;
+  const itemsCode = items.map(it => {
+    const prob = (1 / total).toFixed(2);
+    return `    { name: "${it.name}", emoji: "${it.emoji}", points: ${it.points}, prob: ${prob} }`;
+  }).join(',\n');
+
+  const config = `// ============================================
+// SLICE NINJA — EVENT CONFIG
+// Event: ${eventName}
+// Generated by Config Builder
+// ============================================
+// HOW TO APPLY:
+// 1. Open index.html in Notepad
+// 2. Find the section marked:
+//    "EDIT YOUR EVENT CONFIG HERE"
+// 3. Replace the entire const GAME_CONFIG = { ... };
+//    block with the one below
+// ============================================
+
+const GAME_CONFIG = {
+
+  title:      "${title}",
+  titleLine2: "${titleLine2}",
+  subtitle:   "${subtitle}",
+  eventName:  "${eventName}",
+  logoUrl:    "${logoUrl}",
+  logoWidth:  "clamp(120px, 30vmin, 200px)",
+  
+  menuBgUrl:  "${menuBgUrl}", // Custom menu background (optional)
+  gameBgUrl:  "${gameBgUrl}", // Custom game background (optional)
+  menuMusicUrl: "${menuMusic}", // Menu background music (optional)
+  gameMusicUrl: "${gameMusic}", // Game start music (optional)
+
+  language: "${language}",
+
+  text: {
+    en: {
+      play: "PLAY NOW!", hiScore: "Best:", lives: "LIVES", score: "SCORE",
+      paused: "PAUSED", resume: "RESUME", restart: "RESTART", menu: "MENU",
+      gameOver: "GAME OVER", finalScore: "FINAL SCORE",
+      swipe: "Swipe to slice the fruits!",
+      combo3: "COMBO! 🔥", combo4: "AWESOME! 🔥🔥", combo5: "INSANE!! 🔥🔥🔥",
+      combo6: "UNREAL!! ⚡", combo7: "NINJA MASTER!! 💥",
+    },
+    ms: {
+      play: "MAIN SEKARANG!", hiScore: "Terbaik:", lives: "NYAWA", score: "SKOR",
+      paused: "BERHENTI", resume: "TERUSKAN", restart: "MULA SEMULA", menu: "MENU",
+      gameOver: "PERMAINAN TAMAT", finalScore: "SKOR AKHIR",
+      swipe: "Sapukan jari untuk potong buah!",
+      combo3: "COMBO! 🔥", combo4: "MANTAP! 🔥🔥", combo5: "GILA!! 🔥🔥🔥",
+      combo6: "LUAR BIASA!! ⚡", combo7: "NINJA SEJATI!! 💥",
+    },
+    zh: {
+      play: "开始游戏!", hiScore: "最高:", lives: "生命", score: "分数",
+      paused: "暂停", resume: "继续", restart: "重新开始", menu: "菜单",
+      gameOver: "游戏结束", finalScore: "最终得分", swipe: "滑动手指切水果！",
+      combo3: "连击! 🔥", combo4: "精彩! 🔥🔥", combo5: "疯狂!! 🔥🔥🔥",
+      combo6: "难以置信!! ⚡", combo7: "忍者大师!! 💥",
+    }
+  },
+
+  backgroundTheme:   "${bgTheme}",
+  backgroundColors:  ["${bgColor}", "${bgColor}dd", "${bgColor}"],
+  accentColor:       "${accentColor}",
+
+  items: [
+${itemsCode}
+  ],
+
+  bombEmoji: "${bombEmoji}",
+
+  difficulties: {
+    easy:   { spawnBase:90,  spawnMin:35,  spawnScoreStep:8,  bombProbBase:0.05, bombProbScale:0.0009, bombProbMax:0.13,  waveSize:[[0,2],[15,3],[40,4]] },
+    medium: { spawnBase:90,  spawnMin:35,  spawnScoreStep:8,  bombProbBase:0.08, bombProbScale:0.0012, bombProbMax:0.18,  waveSize:[[0,2],[15,3],[40,4]] },
+    hard:   { spawnBase:60,  spawnMin:25,  spawnScoreStep:6,  bombProbBase:0.12, bombProbScale:0.0016, bombProbMax:0.25,  waveSize:[[0,3],[10,4],[30,5]] },
+  },
+
+  physics: {
+    gravityFactor: 0.00032,
+    sizeTiers: [
+      { name:"medium", sizeF:0.18, prob:0.55, peakMin:0.10, peakMax:0.45, spin:0.06 },
+      { name:"large",  sizeF:0.27, prob:0.45, peakMin:0.25, peakMax:0.55, spin:0.035 },
+    ],
+    driftFactor: 0.004, sizeRandomness: 0.24, hitRadiusFactor: 0.50,
+  },
+
+  rules: {
+    maxLives: 3, comboWindow: 90, comboMinDisplay: 3,
+    countdownFrom: 3,
+    hiScoreKey: "${eventName.toLowerCase().replace(/[^a-z0-9]/g,'_')}_hi",
+  },
+
+  ui: {
+    fontDisplay:  "'Fredoka One', cursive",
+    fontBody:     "'Nunito', sans-serif",
+    hudColor:     "#ffffff",
+    buttonBg:     "${accentColor}",
+    buttonColor:  "${buttonTextColor}",
+    countdownColors: { 3:"#ff9500", 2:"#ffd700", 1:"#00e676" },
+  },
+
+};
+`;
+
+  const blob = new Blob([config], { type: 'text/javascript' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  
+  a.href = url;
+  a.download = 'default-config.js';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  const msg = document.getElementById('successMsg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 6000);
+});
+
+
+// =============== EMOJI PICKER ===============
+const emojiData = {
+  'Food & Fruit': ['🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑', '🥝', '🍍', '🥭', '🍞', '🥐', '🍕', '🍔', '🍟', '🌭', '🌮', '🌯', '🍗', '🍖', '🥗', '🍜', '🍲'],
+  'Medical & Health': ['💊', '💉', '🩺', '🏥', '❤️', '🫀', '🧠', '🦷', '🦴', '🧬', '🦠', '🧪', '🩹', '🚑', '⚕️'],
+  'Corporate & Business': ['💼', '🏢', '📊', '📈', '📉', '💰', '💵', '🏦', '🎯', '🏆', '🥇', '🥈', '🥉', '⭐', '⚡'],
+  'Events & Fun': ['🎉', '🎊', '🎈', '🎁', '🎀', '🎭', '🎪', '🎨', '🎬', '🎮', '🎲', '🎰', '🎳', '🎸', '🎹'],
+  'Nature & Animals': ['🌳', '🌲', '🌴', '🌵', '🌾', '🌿', '🍀', '🍃', '🍂', '🍁', '🌸', '🌺', '🌻', '🌼', '🌷'],
+  'Symbols & Status': ['✅', '❌', '⚠️', '🔥', '💥', '✨', '🌟', '💫', '💯', '🚀', '💡', '🔔']
+};
+
+// Emoji to name mapping for auto-fill
+const emojiToName = {
+  // Food & Fruit
+  '🍎': 'apple', '🍊': 'orange', '🍋': 'lemon', '🍌': 'banana', '🍉': 'watermelon',
+  '🍇': 'grapes', '🍓': 'strawberry', '🍒': 'cherries', '🍑': 'peach', '🥝': 'kiwi',
+  '🍍': 'pineapple', '🥭': 'mango', '🍞': 'bread', '🥐': 'croissant', '🍕': 'pizza',
+  '🍔': 'burger', '🍟': 'fries', '🌭': 'hotdog', '🌮': 'taco', '🌯': 'burrito',
+  '🍗': 'chicken', '🍖': 'meat', '🥗': 'salad', '🍜': 'noodles', '🍲': 'soup',
+  // Medical & Health
+  '💊': 'pill', '💉': 'syringe', '🩺': 'stethoscope', '🏥': 'hospital', '❤️': 'heart',
+  '🫀': 'heartpulse', '🧠': 'brain', '🦷': 'tooth', '🦴': 'bone', '🧬': 'dna',
+  '🦠': 'virus', '🧪': 'test_tube', '🩹': 'bandage', '🚑': 'ambulance', '⚕️': 'medical',
+  // Corporate & Business
+  '💼': 'briefcase', '🏢': 'building', '📊': 'chart', '📈': 'trending_up', '📉': 'trending_down',
+  '💰': 'money', '💵': 'dollar', '🏦': 'bank', '🎯': 'target', '🏆': 'trophy',
+  '🥇': 'gold_medal', '🥈': 'silver_medal', '🥉': 'bronze_medal', '⭐': 'star', '⚡': 'lightning',
+  // Events & Fun
+  '🎉': 'party', '🎊': 'confetti', '🎈': 'balloon', '🎁': 'gift', '🎀': 'ribbon',
+  '🎭': 'theater', '🎪': 'circus', '🎨': 'art', '🎬': 'movie', '🎮': 'game',
+  '🎲': 'dice', '🎰': 'slots', '🎳': 'bowling', '🎸': 'guitar', '🎹': 'piano',
+  // Nature & Animals
+  '🌳': 'tree', '🌲': 'evergreen', '🌴': 'palm', '🌵': 'cactus', '🌾': 'wheat',
+  '🌿': 'herb', '🍀': 'clover', '🍃': 'leaf', '🍂': 'fallen_leaf', '🍁': 'maple_leaf',
+  '🌸': 'flower', '🌺': 'hibiscus', '🌻': 'sunflower', '🌼': 'blossom', '🌷': 'tulip',
+  // Symbols & Status
+  '✅': 'check', '❌': 'cross', '⚠️': 'warning', '🔥': 'fire', '💥': 'explosion',
+  '✨': 'sparkle', '🌟': 'star_bright', '💫': 'dizzy', '💯': 'hundred', '🚀': 'rocket', '💡': 'lightbulb', '🔔': 'bell',
+  // Special
+  '💣': 'bomb'
+};
+
+function initEmojiPicker() {
+  const modal = document.getElementById('emojiModal');
+  const closeBtn = document.getElementById('emojiCloseBtn');
+  const container = document.getElementById('emojiContainer');
+
+  function renderEmojiPicker() {
+    container.innerHTML = '';
+    for (const [category, emojis] of Object.entries(emojiData)) {
+      const categoryDiv = document.createElement('div');
+      categoryDiv.className = 'emoji-category';
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'emoji-category-title';
+      titleDiv.textContent = category;
+      categoryDiv.appendChild(titleDiv);
+      const grid = document.createElement('div');
+      grid.className = 'emoji-grid';
+      emojis.forEach(emoji => {
+        const item = document.createElement('div');
+        item.className = 'emoji-item';
+        item.textContent = emoji;
+        item.addEventListener('click', () => selectEmoji(emoji));
+        grid.appendChild(item);
+      });
+      categoryDiv.appendChild(grid);
+      container.appendChild(categoryDiv);
+    }
+  }
+
+  function selectEmoji(emoji) {
+    if (window.currentEmojiField) {
+      window.currentEmojiField.value = emoji;
+      window.currentEmojiField.dispatchEvent(new Event('input', { bubbles: true }));
+      
+      // Auto-fill name field if this is an item emoji field
+      const isItemField = window.currentEmojiField.classList.contains('emoji-field');
+      if (isItemField) {
+        // Find the adjacent name field (it's the next input in the same row)
+        const row = window.currentEmojiField.closest('.item-row');
+        if (row) {
+          const nameField = row.querySelector('.name-field');
+          if (nameField && emojiToName[emoji]) {
+            nameField.value = emojiToName[emoji];
+            nameField.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        }
+      }
+    }
+    modal.classList.remove('show');
+  }
+
+  function openModal(field) {
+    window.currentEmojiField = field;
+    modal.classList.add('show');
+  }
+
+  closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+  renderEmojiPicker();
+  window.openEmojiPicker = openModal;
+}
+
+
+
+
+// =============== SETUP EMOJI PICKER ===============
+// Wait for DOM to be ready, then set up emoji field handlers
+function setupEmojiFieldHandlers() {
+  // For item emoji fields
+  const emojiFields = document.querySelectorAll('.emoji-field');
+  emojiFields.forEach(field => {
+    field.style.cursor = 'pointer';
+    field.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.openEmojiPicker(this);
+    });
+  });
+  
+  // For bomb emoji field
+  const bombField = document.getElementById('bombEmoji');
+  if (bombField) {
+    bombField.style.cursor = 'pointer';
+    bombField.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.openEmojiPicker(this);
+    });
+  }
+}
+
+// Hook into renderItems to re-attach handlers each time items change
+const originalRenderItems = window.renderItems;
+if (originalRenderItems) {
+  window.renderItems = function() {
+    originalRenderItems.call(this);
+    setTimeout(setupEmojiFieldHandlers, 10);
+  };
+}
+
+// Initialize emoji picker and set up handlers
+setTimeout(() => {
+  try {
+    initEmojiPicker();
+    setupEmojiFieldHandlers();
+  } catch(e) {
+    console.error('Emoji picker setup error:', e);
+  }
+}, 100);
+</script>
+
+  <!-- Emoji Picker Modal -->
+  <div id="emojiModal" class="emoji-modal">
+    <div class="emoji-picker">
+      <button class="close-btn" id="emojiCloseBtn">✕</button>
+      <h3>Pick an Emoji</h3>
+      <div id="emojiContainer"></div>
+    </div>
+  </div>
+</body>
+</html>
+  <!-- Emoji Picker Modal -->
+  <div id="emojiModal" class="emoji-modal">
+    <div class="emoji-picker">
+      <button class="close-btn" id="emojiCloseBtn">✕</button>
+      <h3>Pick an Emoji</h3>
+      <div id="emojiContainer"></div>
+    </div>
+  </div>
+
